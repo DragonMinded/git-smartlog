@@ -50,9 +50,9 @@ def infer_default_branch(config, repo) -> Optional[str]:
         return None
 
     origins = [x.strip() for x in rawdata.decode(encoding).splitlines()]
-    default_origin = origins[0]
 
     try:
+        default_origin = origins[0]
         rawdata = subprocess.check_output([
             'git',
             'remote',
