@@ -126,7 +126,7 @@ def pull_gh_commits() -> Dict[str, GitHubPRStatus]:
                 if check['status'] == 'COMPLETED':
                     if check['conclusion'] == 'SUCCESS':
                         checks[check['name']] = 'PASSED'
-                    elif check['conclusion'] == 'SKIPPED':
+                    elif check['conclusion'] in {'SKIPPED', 'NEUTRAL'}:
                         checks[check['name']] = 'SKIPPED'
                     else:
                         checks[check['name']] = 'FAILED'

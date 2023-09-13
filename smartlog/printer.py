@@ -165,20 +165,23 @@ class TreeNodePrinter:
                 if ref in self.prs:
                     pr = self.prs[ref]
                     checks = "PASSED" if pr.checks else "PENDING"
-                    for _, status in pr.checks.items():
-                        if status == "FAILED":
-                            # Any check failing causes the whole suite to be marked failed. We don't care if there's some
-                            # still running, since we already got a failure.
-                            checks = "FAILED"
-                            break
-                        elif status == "SKIPPED":
-                            # If we skipped a test, demote a "PASSED" to a "SKIPPED", but preserve a still running status.
-                            if checks == "PASSED":
-                                checks = "SKIPPED"
-                        elif status == "RUNNING":
-                            # If we are still running, demote a "PASSED or "SKIPPED" to "RUNNING"
-                            if checks in {"PASSED", "SKIPPED"}:
-                                checks = "RUNNING"
+                    running = [True for _, status in pr.checks.items() if status == "RUNNING"]
+                    passed = [True for _, status in pr.checks.items() if status == "PASSED"]
+                    skipped = [True for _, status in pr.checks.items() if status == "SKIPPED"]
+                    failed = [True for _, status in pr.checks.items() if status == "FAILED"]
+
+                    if failed:
+                        # Always want to show failure even if there's still some running tests.
+                        checks = "FAILED"
+                    elif running:
+                        # Show still running even if we have some passes or skips.
+                        checks = "RUNNING"
+                    elif passed:
+                        # We have all passes and skips, so we want to show passed, since skips aren't relevant here (we got some passes).
+                        checks = "PASSED"
+                    elif skipped:
+                        # We have no passes, no failures, no running, and all skipped, so show skipped.
+                        checks = "SKIPPED"
 
                     lines.append("".join([
                         Fore.CYAN,
