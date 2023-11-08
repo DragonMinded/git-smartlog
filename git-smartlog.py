@@ -51,6 +51,12 @@ def infer_default_branch(config, repo) -> Optional[str]:
 
     origins = [x.strip() for x in rawdata.decode(encoding).splitlines()]
 
+    # Prioritize default "upstream" and "origin" first if it exists.
+    if "upstream" in origins:
+        origins = ["upstream", *[x for x in origins if x != "upstream"]]
+    if "origin" in origins:
+        origins = ["origin", *[x for x in origins if x != "origin"]]
+
     try:
         default_origin = origins[0]
         rawdata = subprocess.check_output([
