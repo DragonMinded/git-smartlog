@@ -129,6 +129,9 @@ def pull_gh_commits() -> Dict[str, GitHubPRStatus]:
         checks: Dict[str, str] = {}
         if 'statusCheckRollup' in pr:
             for check in (pr['statusCheckRollup'] or []):
+                if 'status' not in check:
+                    # This seems to be a status context.
+                    continue
                 if check['status'] == 'COMPLETED':
                     if check['conclusion'] == 'SUCCESS':
                         checks[check['name']] = 'PASSED'
