@@ -38,7 +38,7 @@ def resolve_head(config, repo, options: List[str]) -> Optional[str]:
 
 def infer_default_branch(config, repo) -> Optional[str]:
     # Grab the default encoding to decode shell output.
-    _, encoding = locale.getdefaultlocale()
+    _, encoding = locale.getlocale()
 
     # First, try to ask for the remote, take the first one we get.
     try:
