@@ -66,10 +66,6 @@ class TreeBuilder:
         last_node = None
         c = commit
         while c != lca_commit:
-            if len(c.parents) > 1:
-                # Merged commits are not supported.
-                logger.debug("Merged commits are not supported!")
-                return                 
             node = self.node_lookup.get(c)
             if node is None:
                 node = TreeNode(c)
@@ -83,7 +79,7 @@ class TreeBuilder:
                 break
 
             last_node = node
-            c = c.parents[0]
+            c = c.parents[-1]
 
         # Map the LCA commit into a new node if needed and insert in the tree
         lca_node = self.node_lookup.get(lca_commit)
